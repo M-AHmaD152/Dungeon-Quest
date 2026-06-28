@@ -39,25 +39,12 @@ void addItem(int index, string item)
 {
     inventory[index] = item;
 }
-void showInventory(int capacity)
+void showInventory(int size)
 {
-    for(int i = 0; i < capacity; i++)
+    for(int i = 0; i < size; i++)
     {
         cout<<inventory[i]<<endl;
     }
-}
-void expandInventory(string* &inventory, int& capacity, string newItem)
-{
-    string* newInventory = new string[capacity + 1];
-
-    for (int i = 0; i< capacity; i++)
-    {
-        newInventory[i] = inventory[i];
-    }
-    newInventory[capacity] = newItem;
-    delete[]inventory;
-    inventory = newInventory;
-    capacity++;
 }
 ~Hero ()
 {
@@ -100,6 +87,19 @@ class Monster
     }
 
 };
+void expandInventory(string* &inventory, int& capacity, string newItem)
+{
+    string* newInventory = new string[capacity + 1];
+
+    for (int i = 0; i< capacity; i++)
+    {
+        newInventory[i] = inventory[i];
+    }
+    newInventory[capacity] = newItem;
+    delete[]inventory;
+    inventory = newInventory;
+    capacity++;
+}
 void printDivider() 
 {
     cout << "----------------------------------\n";
@@ -119,22 +119,22 @@ int main(void)
     cin>>name;
     Hero hero(name);
     Monster monster[3] = {Monster("Goblin", 30, 8), Monster("Orc", 50, 10), Monster("Dragon", 100, 12)};
-    int combatChoice;
-    hero.displayStats();
-    cout<<"Things Present in the inventory\n";
-    hero.addItem(0, "sword");
-    hero.addItem(1, "Shield");
-    hero.addItem(2, "Potion Health");
-    hero.expandInventory(hero.inventory, hero.capacity, "Magic Wand");
-    hero.showInventory(hero.capacity);
-    int monsterChoice;
-
     for (int i = 0; i< 3; i++)
     {
         cout<< (i + 1)<<". ";
         monster[i].displayStats();
         cout<<"\n";
     }
+    int combatChoice;
+    hero.displayStats();
+    cout<<"Things Present in the inventory\n";
+    hero.addItem(0, "sword");
+    hero.addItem(1, "Shield");
+    hero.addItem(2, "Potion Health");
+    expandInventory(hero.inventory, hero.capacity, "Magic Wand");
+    hero.showInventory(hero.capacity);
+    int monsterChoice;
+    
     cout<<"Choose Your Monster (as Enemy)(1-3): ";
     cin>> monsterChoice;
     Monster& selectedMonster = monster[monsterChoice - 1];
@@ -144,7 +144,7 @@ int main(void)
 
     bool running = true;
 
-    while(hero.health > 0 && selectedMonster.isAlive() && running)
+    while(hero.health > 0 && selectedMonster.health > 0 && running)
     { 
         printDivider();
         cout << "Round " << round << "\n";
